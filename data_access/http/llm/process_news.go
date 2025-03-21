@@ -19,7 +19,7 @@ type LLMResponse struct {
 
 func (c *Controller) ProcessNews(news domain.NewsList) {
 	prompt := news.ToPrompt()
-	fmt.Println("Отправляем запрос:", prompt[:100], "...")
+	fmt.Println("Отправляем запрос:", prompt)
 
 	requestBody := map[string]interface{}{
 		"model":  "deepseek-r1:7b",
