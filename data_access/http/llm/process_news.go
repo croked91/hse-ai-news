@@ -23,7 +23,7 @@ func (c *Controller) ProcessNews(news domain.NewsList) {
 	fmt.Println("Отправляем запрос:", prompt)
 
 	requestBody := map[string]interface{}{
-		"model":  "deepseek-r1:7b",
+		"model":  "deepseek-r1:32b",
 		"prompt": prompt,
 		"stream": false,
 	}

@@ -4,16 +4,21 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
+	"regexp"
 )
 
 func (c *Controller) Discus(
 	ctx context.Context,
 	discus string,
 ) (string, error) {
+
+	fmt.Println("Прилетел вопрос:", discus)
+
 	requestBody := map[string]interface{}{
-		"model":  "deepseek-r1:7b",
+		"model":  "deepseek-r1:32b",
 		"prompt": discus,
 		"stream": false,
 	}
@@ -44,5 +49,10 @@ func (c *Controller) Discus(
 		return "", err
 	}
 
-	return llmResponse.Response, nil
+	answer := regexp.MustCompile(`.*<\/think>`).
+		ReplaceAllString(llmResponse.Response, "")
+
+	fmt.Println("Прилетел ответ:", answer)
+
+	return answer, nil
 }
