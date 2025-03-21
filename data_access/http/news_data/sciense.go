@@ -19,6 +19,8 @@ func (c *Controller) ScienceNewsS() {
 	apiKey := c.apiKey
 	ep := scienceNewsLink + apiKey
 
+	fmt.Println(ep)
+
 	resp, err := http.Get(ep)
 	if err != nil {
 		fmt.Println(err)

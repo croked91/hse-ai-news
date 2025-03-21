@@ -22,9 +22,10 @@ func MustRegisterNewJob(f any, period time.Duration) (cancel func()) {
 		panic(err)
 	}
 
-	fmt.Println("крона с ID:", j.ID(), "запущена")
-
 	s.Start()
+	j.RunNow()
+
+	fmt.Println("крона с ID:", j.ID(), "запущена")
 
 	return func() {
 		err := s.Shutdown()
