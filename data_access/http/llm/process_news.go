@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"regexp"
 
 	"net/http"
 	"time"
@@ -53,9 +54,12 @@ func (c *Controller) ProcessNews(news domain.NewsList) {
 		fmt.Println(err)
 	}
 
-	fmt.Println("Успешно получено:", llmResponse.Response)
+	processedNews := regexp.MustCompile(`.*<\/think>`).
+		ReplaceAllString(llmResponse.Response, "")
+
+	fmt.Println("Успешно получено:", processedNews)
 	aiedNews := domain.AIedNews{
-		Content:   llmResponse.Response,
+		Content:   processedNews,
 		CreatedAt: llmResponse.CreatedAt,
 	}
 

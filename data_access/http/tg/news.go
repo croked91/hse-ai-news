@@ -30,7 +30,7 @@ func (c *AINewsClient) SendNews(ctx context.Context, b *bot.Bot, update *models.
 
 	_, err = b.SendMessage(ctx, &bot.SendMessageParams{
 		ChatID: update.Message.Chat.ID,
-		Text:   "По состоянию на" + news.CreatedAt.Format("02.01.2006") + "\n\n" + news.Content,
+		Text:   "По состоянию на " + news.CreatedAt.Format("02.01.2006 15:04") + "\n\n" + news.Content,
 	})
 	if err != nil {
 		fmt.Println(err)
