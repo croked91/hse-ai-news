@@ -19,6 +19,7 @@ type LLMResponse struct {
 
 func (c *Controller) ProcessNews(news domain.NewsList) {
 	prompt := news.ToPrompt()
+	fmt.Println("Отправляем запрос:", prompt[:100], "...")
 
 	requestBody := map[string]interface{}{
 		"model":  "deepseek-r1:7b",
@@ -31,7 +32,6 @@ func (c *Controller) ProcessNews(news domain.NewsList) {
 		fmt.Println(err)
 	}
 
-	fmt.Println("Отправляем запрос:", jsonBody)
 	resp, err := http.Post(
 		"http://localhost:11434/api/generate",
 		"application/json",
