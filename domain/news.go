@@ -24,7 +24,7 @@ func (n NewsList) ToPrompt() string {
 	var result string
 
 	for _, news := range n {
-		result += "\n\n\n" + news.Concatenate()
+		result += news.Concatenate()
 	}
 
 	prompt := config.NewsReviewPrompt()
