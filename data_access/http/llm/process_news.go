@@ -31,6 +31,7 @@ func (c *Controller) ProcessNews(news domain.NewsList) {
 		fmt.Println(err)
 	}
 
+	fmt.Println("Отправляем запрос:", jsonBody)
 	resp, err := http.Post(
 		"http://localhost:11434/api/generate",
 		"application/json",
@@ -52,6 +53,7 @@ func (c *Controller) ProcessNews(news domain.NewsList) {
 		fmt.Println(err)
 	}
 
+	fmt.Println("Успешно получено:", llmResponse.Response)
 	aiedNews := domain.AIedNews{
 		Content:   llmResponse.Response,
 		CreatedAt: llmResponse.CreatedAt,

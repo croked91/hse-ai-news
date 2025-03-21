@@ -19,7 +19,7 @@ func (c *Controller) ScienceNewsS() {
 	apiKey := c.apiKey
 	ep := scienceNewsLink + apiKey
 
-	fmt.Println(ep)
+	fmt.Println("Запрашиваем новости с:", ep)
 
 	resp, err := http.Get(ep)
 	if err != nil {
@@ -39,5 +39,6 @@ func (c *Controller) ScienceNewsS() {
 		fmt.Println(err)
 	}
 
+	fmt.Println("Успешно получено:", len(rawNews.Digest), "новостей")
 	c.llm.ProcessNews(rawNews.Digest)
 }
