@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"regexp"
+	"strings"
 
 	"net/http"
 	"time"
@@ -19,7 +19,7 @@ type LLMResponse struct {
 }
 
 func (c *Controller) ProcessNews(news domain.NewsList) {
-	prompt := news.ToPrompt()
+	prompt := news.ToPrompt() + "/n ОТВЕЧАЙ СТРОГО НА РУССКОМ ЯЗЫКЕ"
 	fmt.Println("Отправляем запрос:", prompt)
 
 	requestBody := map[string]interface{}{
@@ -54,8 +54,8 @@ func (c *Controller) ProcessNews(news domain.NewsList) {
 		fmt.Println(err)
 	}
 
-	processedNews := regexp.MustCompile(`.*<\/think>`).
-		ReplaceAllString(llmResponse.Response, "")
+	idx := strings.Index(llmResponse.Response, "</think>") + len("</think>") + 1
+	processedNews := llmResponse.Response[idx:]
 
 	fmt.Println("Успешно получено:", processedNews)
 	aiedNews := domain.AIedNews{

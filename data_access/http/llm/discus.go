@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"regexp"
+	"strings"
 )
 
 func (c *Controller) Discus(
@@ -19,7 +19,7 @@ func (c *Controller) Discus(
 
 	requestBody := map[string]interface{}{
 		"model":  "deepseek-r1:32b",
-		"prompt": discus,
+		"prompt": discus + "/n ОТВЕЧАЙ СТРОГО НА РУССКОМ ЯЗЫКЕ",
 		"stream": false,
 	}
 
@@ -49,8 +49,8 @@ func (c *Controller) Discus(
 		return "", err
 	}
 
-	answer := regexp.MustCompile(`.*<\/think>`).
-		ReplaceAllString(llmResponse.Response, "")
+	idx := strings.Index(llmResponse.Response, "</think>") + len("</think>") + 1
+	answer := llmResponse.Response[idx:]
 
 	fmt.Println("Прилетел ответ:", answer)
 

@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"strings"
 
 	"github.com/croked91/news-ai/infrastructure/config"
 )
@@ -16,7 +17,7 @@ func (c *Controller) CompressCtx(
 ) (string, error) {
 	requestBody := map[string]interface{}{
 		"model":  "deepseek-r1:32b",
-		"prompt": config.NewCompressCtxPrompt() + ctxToCompress,
+		"prompt": config.NewCompressCtxPrompt() + ctxToCompress + "/n ОТВЕЧАЙ СТРОГО НА РУССКОМ ЯЗЫКЕ",
 		"stream": false,
 	}
 
@@ -46,5 +47,8 @@ func (c *Controller) CompressCtx(
 		return "", err
 	}
 
-	return llmResponse.Response, nil
+	idx := strings.Index(llmResponse.Response, "</think>") + len("</think>") + 1
+	compress := llmResponse.Response[idx:]
+
+	return compress, nil
 }
