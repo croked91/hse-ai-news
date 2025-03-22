@@ -12,6 +12,7 @@ import (
 
 func (c *AINewsClient) SendNews(ctx context.Context, b *bot.Bot, update *models.Update) {
 	news, err := c.newsRepo.GetLastNews()
+	fmt.Println("Отправляем новость:", news.Content)
 	if errors.Is(err, repo.ErrNoNews) {
 		b.SendMessage(ctx, &bot.SendMessageParams{
 			ChatID: update.Message.Chat.ID,
