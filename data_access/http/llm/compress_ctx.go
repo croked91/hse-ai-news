@@ -16,8 +16,8 @@ func (c *Controller) CompressCtx(
 	ctxToCompress string,
 ) (string, error) {
 	requestBody := map[string]interface{}{
-		"model":  "deepseek-r1:32b",
-		"prompt": config.NewCompressCtxPrompt() + ctxToCompress + "/n ОТВЕЧАЙ СТРОГО НА РУССКОМ ЯЗЫКЕ",
+		"model":  "deepseek-r1:7b",
+		"prompt": config.NewCompressCtxPrompt() + ctxToCompress,
 		"stream": false,
 	}
 

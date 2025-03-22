@@ -18,8 +18,8 @@ func (c *Controller) Discus(
 	fmt.Println("Прилетел вопрос:", discus)
 
 	requestBody := map[string]interface{}{
-		"model":  "deepseek-r1:32b",
-		"prompt": discus + "/n ОТВЕЧАЙ СТРОГО НА РУССКОМ ЯЗЫКЕ",
+		"model":  "deepseek-r1:7b",
+		"prompt": discus,
 		"stream": false,
 	}
 
