@@ -35,7 +35,7 @@ func (c *AINewsClient) Discus(
 	msg = c.getPrevContext(update.Message.Chat.ID, mode) + "\n\n" + "question:" + msg
 	news, _ := c.newsRepo.GetLastNews()
 
-	response, err := c.llm.Discus(ctx, "previous conversation:" + msg+"/n"+"previous news:"+news.Content+"/n")
+	response, err := c.llm.Discus(ctx, "previous conversation:"+msg+"/n"+"previous news:"+news.Content+"/n")
 	if err != nil {
 		b.SendMessage(ctx, &bot.SendMessageParams{
 			ChatID: chatID,
@@ -75,7 +75,13 @@ func (c *AINewsClient) getPrevContext(chatID int64, mode string) string {
 
 		// TODO: найти место лучше
 		if utf8.RuneCountInString(compressedCtx.Context) > maxCompressedCtxLen {
-
+			go func() {
+				comprCtx, _ := c.llm.CompressCtx(context.Background(), compressedCtx.Context)
+				c.newsRepo.UpsertCompressedContext(domain.CompressedContext{
+					SessionID: sessionID,
+					Context:   comprCtx,
+				})
+			}()
 		}
 
 		return compressedCtx.ToPrompt()
