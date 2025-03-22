@@ -29,7 +29,7 @@ func (n NLastContextList) Concatenate() string {
 		result += ctx.MessageType + ": " + ctx.Message + "\n"
 	}
 
-	result = "News: and previous discussion:\n" + result
+	result = "News and previous discussion:\n" + result
 
 	return result
 }
