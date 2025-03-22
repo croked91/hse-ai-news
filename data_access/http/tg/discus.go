@@ -30,9 +30,10 @@ func (c *AINewsClient) Discus(
 
 	chatID := update.Message.Chat.ID
 
-	mode := os.Getenv("NEWS_CTX_MODE")
+	mode, _ := os.ReadFile("mode")
+	fmt.Println("mode:______________________", mode)
 
-	msg = c.getPrevContext(update.Message.Chat.ID, mode) + "\n\n" + "question:" + msg
+	msg = c.getPrevContext(update.Message.Chat.ID, string(mode)) + "\n\n" + "question:" + msg
 	news, _ := c.newsRepo.GetLastNews()
 
 	response, err := c.llm.Discus(ctx, msg+"\n"+"previous news:"+news.Content+"\n")
@@ -53,10 +54,7 @@ func (c *AINewsClient) Discus(
 		return
 	}
 
-	if mode == nLastMode {
-		c.updateNLastCtx(chatID, msg, response)
-		return
-	}
+	c.updateNLastCtx(chatID, msg, response)
 
 	ctxToCompress := msg + "\n" + "ответ:" + response
 	c.updateCompressedCtx(ctx, chatID, ctxToCompress)

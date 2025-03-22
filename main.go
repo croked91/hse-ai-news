@@ -36,7 +36,11 @@ func main() {
 	llmController := llm.NewController(apiKey, newsRepo)
 	newsController := news_data.NewController(apiKey, llmController)
 
-	fmt.Println("mode:", os.Getenv("NEWS_CTX_MODE"))
+	mode, err := os.ReadFile("mode")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("mode:", string(mode))
 
 	cron.MustRegisterNewJob(newsController.ScienceNewsS, 1*time.Hour)
 
