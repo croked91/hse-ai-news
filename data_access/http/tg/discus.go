@@ -58,7 +58,7 @@ func (c *AINewsClient) Discus(
 		return
 	}
 
-	ctxToCompress := msg + "\n\n" + "ответ:" + response
+	ctxToCompress := msg + "\n" + "ответ:" + response
 	c.updateCompressedCtx(ctx, chatID, ctxToCompress)
 }
 
@@ -71,17 +71,6 @@ func (c *AINewsClient) getPrevContext(chatID int64, mode string) string {
 		compressedCtx, err := c.newsRepo.GetCompressedContext(sessionID)
 		if err != nil {
 			return "предыдущий контекст отсутствует"
-		}
-
-		// TODO: найти место лучше
-		if utf8.RuneCountInString(compressedCtx.Context) > maxCompressedCtxLen {
-			go func() {
-				comprCtx, _ := c.llm.CompressCtx(context.Background(), compressedCtx.Context)
-				c.newsRepo.UpsertCompressedContext(domain.CompressedContext{
-					SessionID: sessionID,
-					Context:   comprCtx,
-				})
-			}()
 		}
 
 		return compressedCtx.ToPrompt()
@@ -122,6 +111,10 @@ func (c *AINewsClient) updateNLastCtx(chatID int64, q, a string) {
 }
 
 func (c *AINewsClient) updateCompressedCtx(ctx context.Context, chatID int64, ctxToCompress string) {
+	if utf8.RuneCountInString(ctxToCompress) < maxCompressedCtxLen {
+		return
+	}
+
 	ctxAfterCompression, err := c.llm.CompressCtx(ctx, ctxToCompress)
 	if err != nil {
 		fmt.Println(err)
