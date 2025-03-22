@@ -13,8 +13,8 @@ import (
 )
 
 const (
-	nLastMode           = "N_LAST"
-	compressedMode      = "COMPRESSED"
+	nLastMode           = 1
+	compressedMode      = 2
 	maxCompressedCtxLen = 120000
 )
 
@@ -30,10 +30,11 @@ func (c *AINewsClient) Discus(
 
 	chatID := update.Message.Chat.ID
 
-	mode, _ := os.ReadFile("mode")
+	rawMode, _ := os.ReadFile("mode")
+	mode, _ := strconv.Atoi(string(rawMode))
 	fmt.Println("mode:______________________", string(mode))
 
-	msg = c.getPrevContext(update.Message.Chat.ID, string(mode)) + "\n\n" + "question:" + msg
+	msg = c.getPrevContext(update.Message.Chat.ID, mode) + "\n\n" + "question:" + msg
 	news, _ := c.newsRepo.GetLastNews()
 
 	response, err := c.llm.Discus(ctx, msg+"\n"+"previous news:"+news.Content+"\n")
@@ -60,7 +61,7 @@ func (c *AINewsClient) Discus(
 	c.updateCompressedCtx(ctx, chatID, ctxToCompress)
 }
 
-func (c *AINewsClient) getPrevContext(chatID int64, mode string) string {
+func (c *AINewsClient) getPrevContext(chatID int64, mode int) string {
 	// TODO: переделать session_id на integer
 	sessionID := strconv.Itoa(int(chatID))
 
