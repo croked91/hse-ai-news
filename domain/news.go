@@ -13,9 +13,9 @@ type News struct {
 }
 
 func (n News) Concatenate() string {
-	return "Заголовок новости:" + n.Title + "\n" +
-		"Текст новости:" + n.Text + "\n" +
-		"Ссылка на новость:" + n.URL + "\n"
+	return "Title:" + n.Title + "\n" +
+		"Text:" + n.Text + "\n" +
+		"Link:" + n.URL + "\n"
 }
 
 type NewsList []News
