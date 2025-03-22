@@ -9,7 +9,7 @@ import (
 	"github.com/croked91/news-ai/domain"
 )
 
-const scienceNewsLink = "https://api.worldnewsapi.com/search-news?categories=science,sports&number=5&language=ru&api-key="
+const scienceNewsLink = "https://api.worldnewsapi.com/search-news?categories=science,sports&number=5&language=en&api-key="
 
 type RawNews struct {
 	Digest domain.NewsList `json:"news"`
