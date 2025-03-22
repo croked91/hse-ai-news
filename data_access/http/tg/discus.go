@@ -35,7 +35,7 @@ func (c *AINewsClient) Discus(
 	msg = c.getPrevContext(update.Message.Chat.ID, mode) + "\n\n" + "question:" + msg
 	news, _ := c.newsRepo.GetLastNews()
 
-	response, err := c.llm.Discus(ctx, msg+"/n"+"previous news:"+news.Content+"/n")
+	response, err := c.llm.Discus(ctx, "previous conversation:" + msg+"/n"+"previous news:"+news.Content+"/n")
 	if err != nil {
 		b.SendMessage(ctx, &bot.SendMessageParams{
 			ChatID: chatID,
