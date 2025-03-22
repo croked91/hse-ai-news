@@ -33,7 +33,9 @@ func (c *AINewsClient) Discus(
 	mode := os.Getenv("NEWS_CTX_MODE")
 
 	msg = c.getPrevContext(update.Message.Chat.ID, mode) + "\n\n" + "вопрос:" + msg
-	response, err := c.llm.Discus(ctx, msg)
+	news, _ := c.newsRepo.GetLastNews()
+
+	response, err := c.llm.Discus(ctx, msg+news.Content)
 	if err != nil {
 		b.SendMessage(ctx, &bot.SendMessageParams{
 			ChatID: chatID,
@@ -124,7 +126,7 @@ func (c *AINewsClient) updateCompressedCtx(ctx context.Context, chatID int64, ct
 		SessionID: strconv.Itoa(int(chatID)),
 		Context:   ctxAfterCompression,
 	}
-	
+
 	err = c.newsRepo.UpsertCompressedContext(newCompressedCtx)
 	if err != nil {
 		fmt.Println(err)
