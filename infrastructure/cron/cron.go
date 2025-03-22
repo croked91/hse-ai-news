@@ -23,7 +23,6 @@ func MustRegisterNewJob(f any, period time.Duration) (cancel func()) {
 	}
 
 	s.Start()
-	j.RunNow()
 
 	fmt.Println("крона с ID:", j.ID(), "запущена")
 
