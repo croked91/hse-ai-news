@@ -31,8 +31,8 @@ func (c *AINewsClient) Discus(
 	chatID := update.Message.Chat.ID
 
 	rawMode, _ := os.ReadFile("mode")
-	mode, _ := strconv.Atoi(string(rawMode))
-	fmt.Println("mode:______________________", string(mode))
+	mode, _ := strconv.Atoi(string(rawMode[0]))
+	fmt.Println("mode:______________________", mode)
 
 	msg = c.getPrevContext(update.Message.Chat.ID, mode) + "\n\n" + "question:" + msg
 	news, _ := c.newsRepo.GetLastNews()
