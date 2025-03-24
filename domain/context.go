@@ -9,7 +9,7 @@ type CompressedContext struct {
 }
 
 func (c CompressedContext) ToPrompt() string {
-	return config.NewsDiscusPrompt() + "Новости и предыдущий диалог с пользователем:\n" + c.Context
+	return "Prompt for you:" + config.NewsDiscusPrompt() + "\n" + "News: and previous discussion:\n" + c.Context
 }
 
 type NLastContext struct {
@@ -29,7 +29,7 @@ func (n NLastContextList) Concatenate() string {
 		result += ctx.MessageType + ": " + ctx.Message + "\n"
 	}
 
-	result = "Новости и предыдущий диалог с пользователем:\n" + result
+	result = "News and previous discussion:\n" + result
 
 	return result
 }

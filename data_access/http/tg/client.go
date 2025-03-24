@@ -31,7 +31,7 @@ func NewAINewsClient(
 	}
 
 	c.newsBot.RegisterHandler(bot.HandlerTypeMessageText, "/news", bot.MatchTypeExact, c.SendNews)
-	c.newsBot.RegisterHandler(bot.HandlerTypeMessageText, "", bot.MatchTypePrefix, c.Discus)
+	c.newsBot.RegisterHandler(bot.HandlerTypeMessageText, "___", bot.MatchTypePrefix, c.Discus)
 
 	return &c
 }

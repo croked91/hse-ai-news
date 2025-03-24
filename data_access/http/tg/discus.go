@@ -13,8 +13,8 @@ import (
 )
 
 const (
-	nLastMode           = "N_LAST"
-	compressedMode      = "COMPRESSED"
+	nLastMode           = 1
+	compressedMode      = 2
 	maxCompressedCtxLen = 120000
 )
 
@@ -30,10 +30,14 @@ func (c *AINewsClient) Discus(
 
 	chatID := update.Message.Chat.ID
 
-	mode := os.Getenv("NEWS_CTX_MODE")
+	rawMode, _ := os.ReadFile("mode")
+	mode, _ := strconv.Atoi(string(rawMode[0]))
+	fmt.Println("mode:______________________", mode)
 
-	msg = c.getPrevContext(update.Message.Chat.ID, mode) + "\n\n" + "вопрос:" + msg
-	response, err := c.llm.Discus(ctx, msg)
+	msg = c.getPrevContext(update.Message.Chat.ID, mode) + "\n\n" + "question:" + msg
+	news, _ := c.newsRepo.GetLastNews()
+
+	response, err := c.llm.Discus(ctx, msg+"\n"+"previous news:"+news.Content+"\n")
 	if err != nil {
 		b.SendMessage(ctx, &bot.SendMessageParams{
 			ChatID: chatID,
@@ -51,16 +55,13 @@ func (c *AINewsClient) Discus(
 		return
 	}
 
-	if mode == nLastMode {
-		c.updateNLastCtx(chatID, msg, response)
-		return
-	}
+	c.updateNLastCtx(chatID, msg, response)
 
-	ctxToCompress := msg + "\n\n" + "ответ:" + response
+	ctxToCompress := msg + "\n" + "ответ:" + response
 	c.updateCompressedCtx(ctx, chatID, ctxToCompress)
 }
 
-func (c *AINewsClient) getPrevContext(chatID int64, mode string) string {
+func (c *AINewsClient) getPrevContext(chatID int64, mode int) string {
 	// TODO: переделать session_id на integer
 	sessionID := strconv.Itoa(int(chatID))
 
@@ -69,11 +70,6 @@ func (c *AINewsClient) getPrevContext(chatID int64, mode string) string {
 		compressedCtx, err := c.newsRepo.GetCompressedContext(sessionID)
 		if err != nil {
 			return "предыдущий контекст отсутствует"
-		}
-
-		// TODO: найти место лучше
-		if utf8.RuneCountInString(compressedCtx.Context) > maxCompressedCtxLen {
-
 		}
 
 		return compressedCtx.ToPrompt()
@@ -114,6 +110,10 @@ func (c *AINewsClient) updateNLastCtx(chatID int64, q, a string) {
 }
 
 func (c *AINewsClient) updateCompressedCtx(ctx context.Context, chatID int64, ctxToCompress string) {
+	if utf8.RuneCountInString(ctxToCompress) < maxCompressedCtxLen {
+		return
+	}
+
 	ctxAfterCompression, err := c.llm.CompressCtx(ctx, ctxToCompress)
 	if err != nil {
 		fmt.Println(err)
@@ -124,7 +124,7 @@ func (c *AINewsClient) updateCompressedCtx(ctx context.Context, chatID int64, ct
 		SessionID: strconv.Itoa(int(chatID)),
 		Context:   ctxAfterCompression,
 	}
-	
+
 	err = c.newsRepo.UpsertCompressedContext(newCompressedCtx)
 	if err != nil {
 		fmt.Println(err)

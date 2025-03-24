@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -34,6 +35,12 @@ func main() {
 	newsRepo := repo.NewNewsAI(d)
 	llmController := llm.NewController(apiKey, newsRepo)
 	newsController := news_data.NewController(apiKey, llmController)
+
+	mode, err := os.ReadFile("mode")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("mode:", string(mode))
 
 	cron.MustRegisterNewJob(newsController.ScienceNewsS, 1*time.Hour)
 
